@@ -1,0 +1,14 @@
+
+
+
+index.html - <!-- <a href="{% url 'log_activity' kpi=kpi %}" class="btn btn-default">+</a> -->
+
+views.py
+
+# def log_activity(response, kpi):
+# 	new_activity = activity(kpi = kpi)
+# 	new_activity.save()
+# 	return redirect('kpis/index.html')
+
+urls 
+	# path('/log_activity', views.log_activity, name = 'log_activity'),

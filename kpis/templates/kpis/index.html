@@ -5,13 +5,15 @@
     {% if kpi_list %}
 
     	{% for kpi in kpi_list%}
-			{% if forloop.first %}<div class="row">{% endif %}
+			{% if forloop.first %}<div class="row" style="">{% endif %}
 			<div class="col-md-4">
-	    		<div class="container">
-
-					<h1>{{ kpi.title }}</h1>
-					<p>{{ kpi.get_total }} {{ kpi.units }}</p>
+	    		<div class="container" style="background-color: {{ kpi.get_group_color }};">
+	    			<div style="color: white">
+						<h1>{{ kpi.title }}</h1>
+						<p>{{ kpi.get_total }} {{ kpi.units }}</p>
+					</div>
 					<a href="{% url 'log_activity' pk=kpi.pk %}" class="btn btn-default">+</a>
+					<a href="{% url 'detail' pk=kpi.pk %}">View Details</a>
 
 	    		</div>
 	    	</div>

@@ -33,10 +33,35 @@ class KPI(models.Model):
 
 	# category = models.CharField(max_length = 25)
 
-	# group_choices = {
-	# 	"XXX" : "XXXX",
-	# }
-	# group = models.ChoiceField(group_choice, defaul ="XXXX")
+	RED = 'RD'
+	GREEN = 'GR'
+	BLUE = 'BL'
+
+	group_choices = (
+		(RED, 'red'),
+		(GREEN, 'green'),
+		(BLUE, 'blue'),
+	)
+
+	group = models.CharField(
+		max_length = 2,
+		choices = group_choices,
+		default = BLUE,
+	)
+
+	def get_group_color(self):
+
+		group_css_colors = {
+			'RD' : '#d9534f',
+			'GR' : '#5cb85c',
+			'BL' : '#337ab7',
+		}
+
+		self.color = group_css_colors[self.group]
+		return self.color
+
+
+
 	# icon_choices = {
 	# 	"XXX" : "XXXX",
 	# }

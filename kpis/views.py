@@ -74,8 +74,10 @@ def kpi_edit(request, pk):
 
 #-------------- Activity Actions -------------#
 
-def activity_delete(request, pk):
-	 pass
+def activity_delete(request, pk, pk_act):
+	 activity = get_object_or_404(Activity, pk = pk_act)
+	 activity.delete()
+	 return redirect('kpi_detail', pk = pk)
 
 #-------------- Administration -------------#
 

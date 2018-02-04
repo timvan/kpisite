@@ -3,7 +3,7 @@
 {% block content %}
 
 <h1>{{ kpi.title }}</h1>
-
+<p><a href="{% url 'kpi_edit' pk=kpi.pk %}">Edit</a></p>
 <br>
 <br>
 
@@ -20,13 +20,13 @@
 			</tr>
 		</thead>
 		<tbody>
-			{% for activity in activity_list %}
+		 	{% for activity in activity_list %}
 				<tr>
 					<td>{{ activity.pk }}</td>
 					<td>{{ activity.datetime_logged }}</td>
 					<td>{{ activity.activity_value }}</td>
 					<td><a href="" class="btn btn-default">Edit</a>
-						<a href="" class="btn btn-default">Delete</a></td>
+						<a href="{% url 'activity_delete' pk=kpi.pk pk_act=activity.pk %}" class="btn btn-default">Delete</a></td>
 				</tr>
 			{% endfor %}
 		</tbody>

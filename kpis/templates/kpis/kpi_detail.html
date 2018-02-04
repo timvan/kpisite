@@ -4,6 +4,38 @@
 
 <h1>{{ kpi.title }}</h1>
 
+<br>
+<br>
+
+<h3>Data Entries</h3>
+<br>
+<div class="table-responsive">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>PK</th>
+				<th>Date Published</th>
+				<th>Activity Value</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for activity in activity_list %}
+				<tr>
+					<td>{{ activity.pk }}</td>
+					<td>{{ activity.datetime_logged }}</td>
+					<td>{{ activity.activity_value }}</td>
+					<td></td>
+				</tr>
+			{% endfor %}
+		</tbody>
+		
+	</table>
+	
+</div>
+
+
+
 
 
 {% endblock %}

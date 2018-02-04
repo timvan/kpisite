@@ -11,51 +11,51 @@ class KPI(models.Model):
 	date_created = models.DateTimeField(default = timezone.now)
 	units = models.CharField(max_length = 20)
 
-	def __str__(self):
-		return self.title
+	# Defining Periodicy
 
-	def get_total(self):
-		activity_list = activity.objects.filter(kpi_id = self.id)
-		self.total = activity_list.aggregate(Sum('activity_value'))['activity_value__sum']
-		return self.total
+	DAILY = 'DY'
+	WEEKLY = 'WK'
+	MONTHLY = 'MH'
+	YEARLY = 'YR'
 
-	def get_daily_total(self):
+	periodicity_choices = {
+		(DAILY, 'Daily'),
+		(WEEKLY, 'Weekly'),
+		(MONTHLY, 'Monthly'),
+		(YEARLY, 'Yearly'),
+	}
 
-		today = date.today()
+	periodicity = models.CharField(
+		max_length = 2,
+		choices = periodicity_choices,
+		default = DAILY,
+		)
 
-		activity_list = activity.objects.filter(kpi_id = self.id)
+	def get_periodicity(self):
 
-		activity_list = activity_list.filter(datetime_logged__year=today.year, 
-			datetime_logged__month=today.month, 
-			datetime_logged__day=today.day)
+		periodicity_written_choices = {
+			'DY' : 'Today',
+			'WK' : 'Week',
+			'MH' : 'Month',
+			'YR' : 'Year',
+		}
 
-		self.total = activity_list.aggregate(Sum('activity_value'))['activity_value__sum']
-		return self.total
+		periodicity_written = periodicity_written_choices[self.periodicity]
 
-
-	## Granularity to be designed. I.e group taget/entries per day/week/5days
-	# gran_choices = {
-	# 	"XXX" : "XXX"
-	# }
-	# granularity = models.ChoiceField(gran_choices, default = "days")
-
-	## Targets to designed upon copletion of granularity
-	# target = models.IntegerField(default = 0)
-	# target_units = models.Field(max_length = 25)	
+		return periodicity_written
 
 
-	##  Additional catgorisation and customisation
 
-	# category = models.CharField(max_length = 25)
+	# Defining Group colours
 
 	RED = 'RD'
 	GREEN = 'GR'
 	BLUE = 'BL'
 
 	group_choices = (
-		(RED, 'red'),
-		(GREEN, 'green'),
-		(BLUE, 'blue'),
+		(RED, 'Red'),
+		(GREEN, 'Green'),
+		(BLUE, 'Blue'),
 	)
 
 	group = models.CharField(
@@ -76,6 +76,55 @@ class KPI(models.Model):
 		return self.color
 
 
+	def __str__(self):
+		return self.title
+
+
+
+	def get_total(self):
+		activity_list = activity.objects.filter(kpi_id = self.id)
+		self.total = activity_list.aggregate(Sum('activity_value'))['activity_value__sum']
+		
+		return self.total
+
+
+		if self.total == None:
+			return 0
+		else:
+			return self.total
+	
+	def get_daily_total(self):
+
+		today = date.today()
+
+		activity_list = activity.objects.filter(kpi_id = self.id)
+
+		activity_list = activity_list.filter(datetime_logged__year=today.year, 
+			datetime_logged__month=today.month, 
+			datetime_logged__day=today.day)
+
+		self.daily_total = activity_list.aggregate(Sum('activity_value'))['activity_value__sum']
+
+		if self.daily_total == None:
+			return 0
+		else:
+			return self.daily_total
+
+
+	## Granularity to be designed. I.e group taget/entries per day/week/5days
+	# gran_choices = {
+	# 	"XXX" : "XXX"
+	# }
+	# granularity = models.ChoiceField(gran_choices, default = "days")
+
+	## Targets to designed upon copletion of granularity
+	# target = models.IntegerField(default = 0)
+	# target_units = models.Field(max_length = 25)	
+
+
+	##  Additional catgorisation and customisation
+
+	# category = models.CharField(max_length = 25)
 
 	# icon_choices = {
 	# 	"XXX" : "XXXX",

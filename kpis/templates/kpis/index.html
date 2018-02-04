@@ -4,20 +4,21 @@
 
     {% if kpi_list %}
 
-    	{% for kpi in kpi_list%}
+    	{% for kpi in kpi_list %}
 			{% if forloop.first %}<div class="row" style="">{% endif %}
 			<div class="col-md-4">
 	    		<div class="container" style="background-color: {{ kpi.get_group_color }};">
 	    			<div style="color: white">
 						<h1>{{ kpi.title }}</h1>
-						<p>{{ kpi.get_daily_total }} today</p>
+						<p>{{ kpi.get_daily_total }} {% if kpi.periodicity != kpi.DAILY %}This {% endif %}{{ kpi.get_periodicity }}</p>
 					</div>
 					<a href="{% url 'log_activity' pk=kpi.pk %}" class="btn btn-default">+</a>
 					<a href="{% url 'kpi_detail' pk=kpi.pk %}">View Details</a>
 
 	    		</div>
+	    		<br>
 	    	</div>
-	    	{% if forloop.counter|divisibleby:3 %}</div><br><div class="row">{% endif %}
+	    	{% if forloop.counter|divisibleby:3 %}</div><div class="row">{% endif %}
 	    	{% if for.loop.last %}</div>{% endif %}
 
 	    {% endfor %}

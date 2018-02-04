@@ -7,6 +7,7 @@ register new user
 detail of each kpi
 edit all funcationality
 create new kpi
+filter between two dates
 
 BUGS
 

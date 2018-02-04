@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from .models import KPI, activity
-from .forms import NewKpiForm
+from .forms import KpiForm
 
 # Create your views here.
 
@@ -25,10 +25,11 @@ def index(request):
 
 @login_required
 def kpi_detail(request, pk):
-	print(pk)
 	kpi = get_object_or_404(KPI, pk = pk)
+	activity_list = activity.objects.filter(kpi_id = kpi.id).order_by('-datetime_logged')
 	context = {
 		'kpi' : kpi,
+		'activity_list' : activity_list
 	}
 	return render(request, 'kpis/kpi_detail.html', context)
 
@@ -36,15 +37,29 @@ def kpi_detail(request, pk):
 @login_required
 def kpi_new(request):
 	if request.method == "POST":
-		form = NewKpiForm(request.POST)
+		form = KpiForm(request.POST)
 		if form.is_valid():
 			kpi = form.save(commit = False)
 			kpi.author = request.user
 			kpi.save()
 			return redirect('index')
 	else:
-		form = NewKpiForm()
+		form = KpiForm()
 	return render(request, 'kpis/kpi_new.html', {'form' : form})
+
+@login_required
+def kpi_edit(request, pk):
+	kpi = get_object_or_404(KPI, pk = pk)
+	if request.method == "POST":
+		form = KpiForm(request.POST, instance = kpi)
+		if form.is_valid():
+			kpi = form.save(commit = False)
+			kpi.author = request.user
+			kpi.save()
+			return redirect('kpi_detail', pk = kpi.pk)
+	else:
+		form = KpiForm(instance = kpi)
+	return render(request, 'kpis/kpi_edit.html', {'form' : form})
 
 #-------------- Administration -------------#
 

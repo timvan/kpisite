@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from .models import KPI, activity
+from .models import KPI, Activity
 from .forms import KpiForm
 
 # Create your views here.
@@ -12,6 +12,9 @@ from .forms import KpiForm
 def landing_page(request):
 	#return HttpResponse("hello world, it's the landing_page")
 	return render(request, 'kpis/landing_page.html')
+
+
+#-------------- KPI Actions -------------#
 
 @login_required
 def index(request):
@@ -26,7 +29,7 @@ def index(request):
 @login_required
 def kpi_detail(request, pk):
 	kpi = get_object_or_404(KPI, pk = pk)
-	activity_list = activity.objects.filter(kpi_id = kpi.id).order_by('-datetime_logged')
+	activity_list = Activity.objects.filter(kpi_id = kpi.id).order_by('-datetime_logged')
 	context = {
 		'kpi' : kpi,
 		'activity_list' : activity_list
@@ -59,14 +62,27 @@ def kpi_edit(request, pk):
 			return redirect('kpi_detail', pk = kpi.pk)
 	else:
 		form = KpiForm(instance = kpi)
-	return render(request, 'kpis/kpi_edit.html', {'form' : form})
+
+	context = {
+		'form' : form,
+		'kpi' : kpi,
+	}
+
+	return render(request, 'kpis/kpi_edit.html', context)
+
+
+
+#-------------- Activity Actions -------------#
+
+def activity_delete(request, pk):
+	 pass
 
 #-------------- Administration -------------#
 
 @login_required
 def log_activity(response, pk):
 	kpi = get_object_or_404(KPI, pk = pk)
-	new_activity = activity(kpi = kpi)
+	new_activity = Activity(kpi = kpi)
 	new_activity.save()
 	return redirect('index')
 

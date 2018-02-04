@@ -82,7 +82,7 @@ class KPI(models.Model):
 
 
 	def get_total(self):
-		activity_list = activity.objects.filter(kpi_id = self.id)
+		activity_list = Activity.objects.filter(kpi_id = self.id)
 		self.total = activity_list.aggregate(Sum('activity_value'))['activity_value__sum']
 		
 		return self.total
@@ -97,7 +97,7 @@ class KPI(models.Model):
 
 		today = date.today()
 
-		activity_list = activity.objects.filter(kpi_id = self.id)
+		activity_list = Activity.objects.filter(kpi_id = self.id)
 
 		activity_list = activity_list.filter(datetime_logged__year=today.year, 
 			datetime_logged__month=today.month, 
@@ -131,7 +131,7 @@ class KPI(models.Model):
 	# }
 	# icon = models.ChoiceField(group_choice, defaul ="XXXX")
 
-class activity(models.Model):
+class Activity(models.Model):
 	activity_value = models.IntegerField(default = 1) # possibly default = 1,
 	kpi = models.ForeignKey(KPI, on_delete = models.CASCADE, parent_link = True)
 	datetime_logged = models.DateTimeField(default = timezone.now)

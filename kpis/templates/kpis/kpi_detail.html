@@ -16,7 +16,7 @@
 				<th>PK</th>
 				<th>Date Published</th>
 				<th>Activity Value</th>
-				<th>Action</th>
+				<th>Actions</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -25,7 +25,8 @@
 					<td>{{ activity.pk }}</td>
 					<td>{{ activity.datetime_logged }}</td>
 					<td>{{ activity.activity_value }}</td>
-					<td></td>
+					<td><a href="" class="btn btn-default">Edit</a>
+						<a href="" class="btn btn-default">Delete</a></td>
 				</tr>
 			{% endfor %}
 		</tbody>

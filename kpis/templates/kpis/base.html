@@ -12,7 +12,12 @@
   </head>
   <body>
   <div class="jumbotron">
-    <h1>Welcome to KPIs</h1>
+    <a href="{% url 'index' %}"><h1>Welcome to KPIs</h1></a>
+    {% if user.is_authenticated %}
+      <a href="{% url 'logout' %}">LougOut</a>
+      <span>  |  </span>
+      <a href="{% url 'kpi_new' %}">New KPI</a>
+    {% endif %}
   </div>
 
   <div class="container">

@@ -8,3 +8,7 @@ detail of each kpi
 edit all funcationality
 create new kpi
 
+BUGS
+
+can access pk that are not authenticated by visiting kpis/#
+check that if not logged in - alwasy redirects to fornt page

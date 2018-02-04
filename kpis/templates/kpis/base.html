@@ -14,7 +14,7 @@
   <div class="jumbotron">
     <a href="{% url 'index' %}"><h1>Welcome to KPIs</h1></a>
     {% if user.is_authenticated %}
-      <a href="{% url 'logout' %}">LougOut</a>
+      <a href="{% url 'logout' %}">Log Out</a>
       <span>  |  </span>
       <a href="{% url 'kpi_new' %}">New KPI</a>
     {% endif %}

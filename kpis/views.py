@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate
 from .models import KPI, activity
+from .forms import NewKpiForm
 
 # Create your views here.
 
@@ -32,3 +33,15 @@ def log_activity(response, pk):
 def detail(response, pk):
 	return HttpResponse("Hello World")
 
+@login_required
+def kpi_new(request):
+	if request.method == "POST":
+		form = NewKpiForm(request.POST)
+		if form.is_valid():
+			kpi = form.save(commit = False)
+			kpi.author = request.user
+			kpi.save()
+			return redirect('index')
+	else:
+		form = NewKpiForm()
+	return render(request, 'kpis/kpi_new.html', {'form' : form})

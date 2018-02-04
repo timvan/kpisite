@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.db.models import Sum
+from datetime import date
 
 # Create your models here.
 
@@ -17,6 +18,20 @@ class KPI(models.Model):
 		activity_list = activity.objects.filter(kpi_id = self.id)
 		self.total = activity_list.aggregate(Sum('activity_value'))['activity_value__sum']
 		return self.total
+
+	def get_daily_total(self):
+
+		today = date.today()
+
+		activity_list = activity.objects.filter(kpi_id = self.id)
+
+		activity_list = activity_list.filter(datetime_logged__year=today.year, 
+			datetime_logged__month=today.month, 
+			datetime_logged__day=today.day)
+
+		self.total = activity_list.aggregate(Sum('activity_value'))['activity_value__sum']
+		return self.total
+
 
 	## Granularity to be designed. I.e group taget/entries per day/week/5days
 	# gran_choices = {
@@ -70,4 +85,4 @@ class KPI(models.Model):
 class activity(models.Model):
 	activity_value = models.IntegerField(default = 1) # possibly default = 1,
 	kpi = models.ForeignKey(KPI, on_delete = models.CASCADE, parent_link = True)
-	date_time = models.DateTimeField(default = timezone.now)
+	datetime_logged = models.DateTimeField(default = timezone.now)

@@ -6,5 +6,6 @@ urlpatterns = [
 	path('kpis/', views.index, name = 'index'),
 	path('kpis/<int:pk>/log_activity', views.log_activity, name = 'log_activity'),
 	path('kpis/<int:pk>/detail', views.detail, name = 'detail'),
+	path('kpis/kpi_new', views.kpi_new, name = 'kpi_new'),
 
 ]

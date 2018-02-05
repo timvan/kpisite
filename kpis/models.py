@@ -111,6 +111,8 @@ class KPI(models.Model):
 			return self.daily_total
 
 
+
+
 	## Granularity to be designed. I.e group taget/entries per day/week/5days
 	# gran_choices = {
 	# 	"XXX" : "XXX"

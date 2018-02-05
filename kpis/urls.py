@@ -11,5 +11,6 @@ urlpatterns = [
 	path('kpis/kpi_new/', views.kpi_new, name = 'kpi_new'),
 	path('kpis/<int:pk>/detail/<int:pk_act>/delete', views.activity_delete, name = 'activity_delete'),
 	path('kpis/<int:pk>/detail/<int:pk_act>/edit', views.activity_edit, name = 'activity_edit'),
+	path('kpis/exportCSV', views.export_csv, name = 'export_csv'),
 
 ]

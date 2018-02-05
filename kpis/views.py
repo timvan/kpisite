@@ -6,7 +6,8 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from .models import KPI, Activity
 from .forms import KpiForm, ActivityForm
-
+from datetime import date
+import csv
 # Create your views here.
 
 def landing_page(request):
@@ -71,6 +72,14 @@ def kpi_edit(request, pk):
 	return render(request, 'kpis/kpi_edit.html', context)
 
 
+@login_required
+def log_activity(response, pk):
+	kpi = get_object_or_404(KPI, pk = pk)
+	new_activity = Activity(kpi = kpi)
+	new_activity.save()
+	return redirect('index')
+
+
 
 #-------------- Activity Actions -------------#
 
@@ -104,13 +113,6 @@ def activity_edit(request, pk, pk_act):
 
 #-------------- Administration -------------#
 
-@login_required
-def log_activity(response, pk):
-	kpi = get_object_or_404(KPI, pk = pk)
-	new_activity = Activity(kpi = kpi)
-	new_activity.save()
-	return redirect('index')
-
 
 def signup(request):
 	if request.method == 'POST':
@@ -126,3 +128,27 @@ def signup(request):
 	else:
 		form = UserCreationForm()
 	return render(request, 'registration/signup.html', {'form': form})
+
+
+#-------------- Export CSV -------------#
+
+def export_csv(request):
+	#today = date.today()
+	#filename = "_".join(["KPIsExport", str(request.user), str(today.year), str(today.month), str(today.day)]) + ".csv"
+	#print (filename)
+	response = HttpResponse(content_type = 'text/csv')
+	response['Content-Disposition'] = 'attachement; filename-"export.csv"'
+
+	writer = csv.writer(response)
+	writer.writerow(['KPI', 'DateTime', 'Activity'])
+	kpi_list = KPI.objects.filter(author = request.user)
+	for kpi in kpi_list:
+		activity_list = Activity.objects.filter(kpi_id = kpi.id)
+		for activity in activity_list:
+			writer.writerow([kpi.title, activity.datetime_logged, activity.activity_value])
+
+	return response
+
+
+
+

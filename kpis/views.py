@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from .models import KPI, Activity
-from .forms import KpiForm
+from .forms import KpiForm, ActivityForm
 
 # Create your views here.
 
@@ -78,6 +78,26 @@ def activity_delete(request, pk, pk_act):
 	 activity = get_object_or_404(Activity, pk = pk_act)
 	 activity.delete()
 	 return redirect('kpi_detail', pk = pk)
+
+def activity_edit(request, pk, pk_act):
+	kpi = get_object_or_404(KPI, pk = pk)
+	activity = get_object_or_404(Activity, pk = pk_act)
+
+	if request.method == "POST":
+		form = ActivityForm(request.POST, instance = activity)
+		if form.is_valid():
+			activity = form.save(commit = False)
+			activity.save()
+			return redirect('kpi_detail', pk = kpi.pk)
+	else:
+		form = ActivityForm(instance = activity)
+	
+	context = {
+		'form' : form,
+		'kpi' : kpi,
+	}
+
+	return render(request, 'kpis/activity_edit.html', context)
 
 #-------------- Administration -------------#
 

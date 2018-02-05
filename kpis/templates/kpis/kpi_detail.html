@@ -25,8 +25,10 @@
 					<td>{{ activity.pk }}</td>
 					<td>{{ activity.datetime_logged }}</td>
 					<td>{{ activity.activity_value }}</td>
-					<td><a href="" class="btn btn-default">Edit</a>
-						<a href="{% url 'activity_delete' pk=kpi.pk pk_act=activity.pk %}" class="btn btn-default">Delete</a></td>
+					<td>
+						<a href="{% url 'activity_edit' pk=kpi.pk pk_act=activity.pk %}" class="btn btn-default">Edit</a>
+						<a href="{% url 'activity_delete' pk=kpi.pk pk_act=activity.pk %}" class="btn btn-default">Delete</a>
+					</td>
 				</tr>
 			{% endfor %}
 		</tbody>

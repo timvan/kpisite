@@ -1,13 +1,27 @@
 TODO List
 
 front page
-log in
-log out 
-register new user
 detail of each kpi
 edit all funcationality
-create new kpi
 filter between two dates
+edit activity
+change default activity value
+have variable activity value compared to default plus
+export CSV
+more colours
+targets
+graphs - pie chart against target, comparable line graphs with variable periods
+change order of kpis, delete in dashboard edit mode.
+
+
+
+TEMPLATES FOR LIFE
+
+Exercise  - km run, pushups, yoga sessions,
+Eating - new meals tried, eaten out, coffeess, nights out, casual drinks
+HouseKeeping - showers, shaved, washes put on
+Personal/Private - sex, masturbated
+
 
 BUGS
 

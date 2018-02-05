@@ -82,6 +82,7 @@ def activity_delete(request, pk, pk_act):
 def activity_edit(request, pk, pk_act):
 	kpi = get_object_or_404(KPI, pk = pk)
 	activity = get_object_or_404(Activity, pk = pk_act)
+	activity_list = Activity.objects.filter(kpi_id = kpi.id).order_by('-datetime_logged')
 
 	if request.method == "POST":
 		form = ActivityForm(request.POST, instance = activity)
@@ -95,9 +96,11 @@ def activity_edit(request, pk, pk_act):
 	context = {
 		'form' : form,
 		'kpi' : kpi,
+		'activity_editing' : activity,
+		'activity_list' : activity_list,
 	}
 
-	return render(request, 'kpis/activity_edit.html', context)
+	return render(request, 'kpis/kpi_detail.html', context)
 
 #-------------- Administration -------------#
 

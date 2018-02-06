@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.db.models import Sum
-from datetime import date
+from datetime import date, datetime, timedelta
 
 # Create your models here.
 
@@ -80,6 +80,50 @@ class KPI(models.Model):
 		return self.title
 
 
+	def get_all_activities_this_period(self):
+
+		datetime_now = timezone.now()
+		tzinfo = datetime_now.tzinfo
+
+		year = datetime_now.year
+		month = datetime_now.month
+		day = datetime_now.day
+
+		weekday = datetime_now.weekday()
+		
+		date_ranges = {
+			'DY' : datetime(year, month, day, tzinfo = tzinfo),
+			'WK' : datetime(year, month, day,  tzinfo = tzinfo) - timedelta(weekday),
+			'MH' : datetime(year, month, 1,  tzinfo = tzinfo),
+			'YR' : datetime(year, 1, 1,  tzinfo = tzinfo),
+
+		}
+
+
+		activity_list = Activity.objects.filter(kpi_id = self.id)
+		activity_list = activity_list.filter(datetime_logged__gte = date_ranges[self.periodicity],
+			datetime_logged__lt = datetime_now
+			)
+
+		return activity_list
+
+
+
+	def get_period_total(self):
+
+		activity_list = self.get_all_activities_this_period()
+		period_total = activity_list.aggregate(Sum('activity_value'))['activity_value__sum']
+
+		if period_total == None:
+			return 0
+		else:
+			return period_total
+
+		print(period_total)
+
+
+	"""
+	
 
 	def get_total(self):
 		activity_list = Activity.objects.filter(kpi_id = self.id)
@@ -109,6 +153,9 @@ class KPI(models.Model):
 			return 0
 		else:
 			return self.daily_total
+
+	"""
+
 
 
 

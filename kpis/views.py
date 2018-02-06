@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
+from django.views.generic import view
 from .models import KPI, Activity
 from .forms import KpiForm, ActivityForm
 from datetime import date
@@ -148,6 +149,8 @@ def export_csv(request):
 			writer.writerow([kpi.title, activity.datetime_logged, activity.activity_value])
 
 	return response
+
+
 
 
 

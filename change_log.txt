@@ -28,3 +28,17 @@ BUGS
 can access pk that are not authenticated by visiting kpis/#
 check that if not logged in - alwasy redirects to fornt page
 datetime does not work with excel
+
+
+
+SOURCES OF INFO
+https://i.redd.it/9xcg84rdk9701.png
+
+
+
+
+
+
+LESSONS LEARNT
+
+JsonResponse for Django requests

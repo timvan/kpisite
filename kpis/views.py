@@ -4,11 +4,20 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from django.views.generic import view
+from django.views.generic import View
+from django.db.models import Sum
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
 from .models import KPI, Activity
 from .forms import KpiForm, ActivityForm
+
 from datetime import date
 import csv
+
+
+
 # Create your views here.
 
 def landing_page(request):
@@ -151,6 +160,39 @@ def export_csv(request):
 	return response
 
 
+#-------------- Charts -------------#
+
+def kpi_charts(request, pk):
+	kpi = get_object_or_404(KPI, pk = pk)
+	context = {
+		'kpi' : kpi,
+	}
+	return render(request, 'kpis/kpi_charts.html', context)
+
+
+class ChartData(APIView):
+	authentication_classes = []
+	permission_classes = []
+	def get(self, request, pk, format=None):
+
+		kpi = get_object_or_404(KPI, pk = pk)
+		activity_list = Activity.objects.filter(kpi_id = kpi.id)
+		labels = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
+		chart_data = []
+
+		for i in [2, 3, 4, 5, 6, 7, 1]:
+			query = Activity.objects.filter(kpi_id = kpi.id).filter(datetime_logged__week_day=i)
+			query_total = query.aggregate(Sum('activity_value'))['activity_value__sum']
+			chart_data.append(query_total)
+
+		print(chart_data)
+
+		data = {
+			"chart_data" : chart_data,
+			"chart_labels" : labels,
+		}
+		return Response(data)
 
 
 

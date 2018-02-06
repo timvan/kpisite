@@ -3,9 +3,16 @@
 {% block content %}
 
 <h1>{{ kpi.title }}</h1>
-<p><a href="{% url 'kpi_edit' pk=kpi.pk %}">Edit KPI</a></p>
+<a href="{% url 'kpi_edit' pk=kpi.pk %}">Edit KPI</a>
+<span> | </span>
+<a href="{% url 'kpi_charts' pk=kpi.pk %}">View Charts</a>
 <br>
 <br>
+
+
+
+
+<!-- Date Table Section -->
 
 <h3>Data Entries</h3>
 <br>
@@ -53,7 +60,6 @@
 	</table>
 	
 </div>
-
 
 
 

@@ -2,7 +2,18 @@
 
 {% block content %}
 
-<h1>{{ kpi.title }}</h1>
+<div class="col-md-4">
+	<div class="container" style="background-color: {{ kpi.get_group_color }};">
+		<div style="color: white">
+			<h1>{{ kpi.title }}</h1>
+			<p>{{ kpi.get_period_total }} {% if kpi.periodicity != kpi.DAILY %}This {% endif %}{{ kpi.get_periodicity }}</p>
+		</div>
+	</div>
+	<br>
+</div>
+
+<a href="{% url 'kpi_delete' pk=kpi.pk %}">Delete</a>
+<span> | </span>
 <a href="{% url 'kpi_edit' pk=kpi.pk %}">Edit KPI</a>
 <span> | </span>
 <a href="{% url 'kpi_charts' pk=kpi.pk %}">View Charts</a>

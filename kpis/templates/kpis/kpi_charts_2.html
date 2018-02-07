@@ -1,0 +1,116 @@
+{% extends 'kpis/base.html' %}
+
+{% block content %}
+
+
+
+<a href="{% url 'kpi_detail' pk=kpi.pk %}"><h1>{{ kpi.title }}</h1></a>
+
+<!-- Chart Table Section -->
+
+
+<div id='endpoint-url-div' url-endpoint="{% url 'ChartData' kpi.pk %}" kpi-title="{{ kpi.title }}"" style="display: none;"></div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-6">
+			<canvas id="myChart" width="400" height="400"></canvas>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+{% block jquery %}
+
+var endpoint = document.getElementById('endpoint-url-div').getAttribute('url-endpoint')
+var defaultData = []
+var labels = []
+var chart_title = document.getElementById('endpoint-url-div').getAttribute('kpi-title')
+
+
+$.ajax({
+	method: "GET",
+	url: endpoint,
+	success: function(data){
+		labels = data.chart_labels
+		defaultData = data.chart_data
+		console.log(data)
+		set_chart()
+
+	},
+	error: function(error_data){
+		console.log("error")
+		console.log(error_data)
+	}
+})
+
+function set_chart(){
+
+
+	var ctx = document.getElementById("myChart").getContext('2d');
+	var myChart = new Chart(ctx, {
+		type: 'bar',
+		data: {
+			labels: labels,
+			datasets: [{
+				label: chart_title,
+				data: defaultData,
+				backgroundColor: [
+					'rgba(255, 99, 132, 0.2)',
+					'rgba(54, 162, 235, 0.2)',
+					'rgba(255, 206, 86, 0.2)',
+					'rgba(75, 192, 192, 0.2)',
+					'rgba(153, 102, 255, 0.2)',
+					'rgba(255, 159, 64, 0.2)'
+					],
+				borderColor: [
+					'rgba(255,99,132,1)',
+					'rgba(54, 162, 235, 1)',
+					'rgba(255, 206, 86, 1)',
+					'rgba(75, 192, 192, 1)',
+					'rgba(153, 102, 255, 1)',
+					'rgba(255, 159, 64, 1)'
+					],
+				borderWidth: 1
+			}]
+		},
+		options: {
+			responsive : true,
+			scales: {
+				yAxes: [{
+					ticks: {
+		    			beginAtZero:true
+					}
+				}]
+			}
+		}
+	});
+};
+
+
+
+// function set_doughnut_chart(){
+
+// 	var myDoughnutChart = new Chart(ctx, {
+// 	    type: 'doughnut',
+// 	    data: {
+// 	    	labels: labels,
+// 			datasets: [{
+// 				label: chart_title,
+// 				data: defaultData,
+// 			}]
+
+// 	    }
+// 	    options: {
+//			responsive : ture,
+//		}
+// 	});
+// };
+
+
+{% endblock %}
+
+</script>
+
+{% endblock %}

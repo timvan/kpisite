@@ -2,11 +2,15 @@
 
 {% block content %}
 
-<h1>Edit {{ kpi.title }}</h1>
-	<form method="post" class="post-form">{% csrf_token %}
-		{{ form.as_p }}
-		<button type="submit" class="save btn btn-deault">Save</button>
-	</form>
+{{ form.media }}
 
+<h1>Edit {{ kpi.title }}</h1>
+        <form method="post" role="form">
+            {{ form.as_p}}
+            {% csrf_token %}
+            <input type="submit" value="Submit" class="btn btn-primary" />
+        </form>
 
 {% endblock %}
+
+

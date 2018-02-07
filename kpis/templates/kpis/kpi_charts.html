@@ -9,12 +9,17 @@
 <!-- Chart Table Section -->
 
 
-<div id='endpoint-url-div' url-endpoint="{% url 'ChartData' kpi.pk %}" kpi-title="{{ kpi.title }}"" style="display: none;"></div>
+<div id="kpi-title" kpi-title="{{ kpi.title }}" style="display: none;"></div>
+<div id='endpoint-url-div-doughnut' url-endpoint="{% url 'ChartData' kpi.pk %}"  style="display: none;"></div>
+<div id='endpoint-url-div-barchart' url-endpoint="{% url 'ChartHistory' kpi.pk %}"  style="display: none;"></div>
 
 <div class="container">
 	<div class="row">
-		<div class="col-md-6">
+		<div class="col-md-4">
 			<canvas id="myChart" width="400" height="400"></canvas>
+		</div>
+		<div class="col-md-6">
+			<canvas id="chart2" width="400" height="400"></canvas>
 		</div>
 	</div>
 </div>
@@ -23,19 +28,74 @@
 
 {% block jquery %}
 
-var endpoint = document.getElementById('endpoint-url-div').getAttribute('url-endpoint')
+var endpoint1 = document.getElementById('endpoint-url-div-doughnut').getAttribute('url-endpoint')
+var endpoint2 = document.getElementById('endpoint-url-div-barchart').getAttribute('url-endpoint')
 var defaultData = []
 var labels = []
-var chart_title = document.getElementById('endpoint-url-div').getAttribute('kpi-title')
+var chart_title = document.getElementById('kpi-title').getAttribute('kpi-title')
 
 
 $.ajax({
 	method: "GET",
-	url: endpoint,
+	url: endpoint1,
 	success: function(data){
 		labels = data.chart_labels
 		defaultData = data.chart_data
-		console.log(data)
+		console.log(defaultData)
+		console.log(labels)
+		set_doughnut_chart()
+
+	},
+	error: function(error_data){
+		console.log("error")
+		console.log(error_data)
+	}
+})
+
+function set_doughnut_chart() {
+	var ctx = document.getElementById("myChart").getContext('2d');
+	var myDoughnutChart = new Chart(ctx, {
+	    type: 'doughnut',
+	    data: {
+	    	labels: labels,
+			datasets: [{
+				data: defaultData,
+				backgroundColor: [
+					'rgba(255, 99, 132, 0.2)',
+					'rgba(54, 162, 235, 0.2)',
+					'rgba(255, 206, 86, 0.2)',
+					'rgba(75, 192, 192, 0.2)',
+					'rgba(153, 102, 255, 0.2)',
+					'rgba(255, 180, 180, 0.2)',
+					'rgba(50, 150, 40, 0.2)',
+					],
+				borderColor: [
+					'rgba(255,99,132,1)',
+					'rgba(54, 162, 235, 1)',
+					'rgba(255, 206, 86, 1)',
+					'rgba(75, 192, 192, 1)',
+					'rgba(153, 102, 255, 1)',
+					'rgba(255, 180, 180, 1)',
+					'rgba(50, 150, 40, 1)',
+					],
+				borderWidth: 1
+			}]
+
+	    },
+	    options: {
+			responsive : true,
+		}
+	});
+};
+
+$.ajax({
+	method: "GET",
+	url: endpoint2,
+	success: function(data){
+		labels = data.chart_labels
+		defaultData = data.chart_data
+		console.log(defaultData)
+		console.log(labels)
 		set_chart()
 
 	},
@@ -47,8 +107,7 @@ $.ajax({
 
 function set_chart(){
 
-
-	var ctx = document.getElementById("myChart").getContext('2d');
+	var ctx = document.getElementById("chart2").getContext('2d');
 	var myChart = new Chart(ctx, {
 		type: 'bar',
 		data: {
@@ -87,6 +146,9 @@ function set_chart(){
 		}
 	});
 };
+
+
+
 
 
 {% endblock %}

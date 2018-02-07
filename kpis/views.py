@@ -13,8 +13,9 @@ from rest_framework.response import Response
 from .models import KPI, Activity
 from .forms import KpiForm, ActivityForm
 
-from datetime import date
+from datetime import date, datetime, timedelta
 import csv
+import random
 
 
 
@@ -61,6 +62,13 @@ def kpi_new(request):
 		form = KpiForm()
 	return render(request, 'kpis/kpi_new.html', {'form' : form})
 
+
+@login_required
+def kpi_delete(request, pk):
+	kpi = get_object_or_404(KPI, pk = pk)
+	kpi.delete()
+	return redirect('index')
+
 @login_required
 def kpi_edit(request, pk):
 	kpi = get_object_or_404(KPI, pk = pk)
@@ -87,6 +95,28 @@ def log_activity(response, pk):
 	kpi = get_object_or_404(KPI, pk = pk)
 	new_activity = Activity(kpi = kpi)
 	new_activity.save()
+	return redirect('index')
+
+
+#-------------- Create Example Data -------------#
+	
+def create_examples(request):
+	kpi_titles = ["Coffees", "Swum in the Sea", "Went surfing", "Hours worked on project", "Km's ran", "Films watched"]
+	kpi_periodicities = ['WK', 'MH', 'MH', "DY", "WK", "YR"]
+	kpi_groups = ["RD", "BL", "BL", "GR", "BL", "RD"]
+	kpi_units = "times"
+
+	activity_amount_max = [2, 1, 1, 10, 15, 1]
+
+	today = datetime.today()
+
+	for i in range(len(kpi_titles)):
+		kpi = KPI(author = request.user, title = kpi_titles[i], units = kpi_units, periodicity = kpi_periodicities[i], group = kpi_groups[i])
+		kpi.save()
+		for j in range(random.randint(20, 300)):
+			new_activity = Activity(kpi = kpi, activity_value = random.randint(0,activity_amount_max[i]), datetime_logged = today - timedelta(random.randint(0, 365)))
+			new_activity.save()
+
 	return redirect('index')
 
 
@@ -194,6 +224,48 @@ class ChartData(APIView):
 		}
 		return Response(data)
 
+class ChartHistory(APIView):
+	authentication_classes = []
+	permission_classes = []
+
+	def get(self, request, pk, format=None):
+
+		kpi = get_object_or_404(KPI, pk = pk)
+		activity_list = Activity.objects.filter(kpi_id = kpi.id)
+		labels_monthly = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+		chart_data = []
+		labels = []
+
+		now = datetime.now()
+
+		start_date = now
+		end_date = datetime(now.year, now.month, 1)
+
+		for i in range(1,13):
+			query = Activity.objects.filter(kpi_id = kpi.id)
+			query_activities = query.filter(datetime_logged__lte = start_date).filter(datetime_logged__gte =  end_date)
+			query_total = query_activities.aggregate(Sum('activity_value'))['activity_value__sum']
+			chart_data.append(query_total)
+
+			if start_date.month == 1:
+				labels.append(labels_monthly[start_date.month - 1] + " " + str(start_date.year))
+			else:
+				labels.append(labels_monthly[start_date.month - 1])
+
+			start_date = end_date - timedelta(microseconds = 1)
+			if (12 + now.month - i) % 12 == 0:
+				end_date = datetime(end_date.year - 1, 12, 1)
+			else:
+				end_date = datetime(end_date.year, (12 + end_date.month - 1) % 12, 1)
+
+		print(chart_data)
+
+		data = {
+			"chart_data" : chart_data[::-1],
+			"chart_labels" : labels[::-1],
+		}
+		return Response(data)
 
 
 

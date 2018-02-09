@@ -1,0 +1,120 @@
+{% extends 'kpis/kpi_detail.html' %}
+
+{% block datatable %}
+
+<!-- Date Table Section -->
+
+<h3>Data Entries</h3>
+<br>
+<div class="table-responsive">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>PK</th>
+				<th>Date Published</th>
+				<th>Activity Value</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+		 	{% for activity in activity_list %}
+				<tr id="row{{ forloop.counter }}">
+					<div id='row{{ forloop.counter }}_endpoint-url-div_activity_edit' url-endpoint="{% url 'activity_edit' pk=kpi.pk pk_act=activity.pk %}"  style="display: none;"></div>
+					<td>{{ activity.pk }}</td>
+					<td id="row{{ forloop.counter }}_datetime_logged" class="row{{ forloop.counter }}_form">{{ activity.datetime_logged }}</td>
+					<td id="row{{ forloop.counter }}_activity_value" class="row{{ forloop.counter }}">{{ activity.activity_value }}</td>
+					<td id="row{{ forloop.counter }}_actions">
+					<button class="row{{ forloop.counter }} activity_edit btn btn-success">Edit</button>
+					<a id="row{{ forloop.counter }}_activity_delete" href="{% url 'activity_delete' pk=kpi.pk pk_act=activity.pk %}" class="row{{ forloop.counter }} btn btn-danger">Delete</a>
+					</td>
+				</tr >
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if activity_list.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ activity_list.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ activity_list.number }} of {{ activity_list.paginator.num_pages }}.
+        </span>
+
+        {% if activity_list.has_next %}
+            <a href="?page={{ activity_list.next_page_number }}">next</a>
+            <a href="?page={{ activity_list.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+
+
+<script type="text/javascript">
+
+	$("button.activity_edit").on("click", function(event){
+
+		var id_row = $(this).attr("class").split(" ")[0]
+
+
+		//Change activity datetime_logged data to html input for form edditing
+		var id_datetime_logged = id_row + "_datetime_logged"		
+		var contents_datetime_logged = $("#" + id_datetime_logged).text()
+		$("#" + id_datetime_logged).html('<input type="text" id="' + id_datetime_logged + '_input" value="' + contents_datetime_logged + '">')
+
+
+		//Change activity value data to html input for form edditing 
+		var id_activity_value = id_row + "_activity_value"
+		var contents_activity_value = $("#" + id_activity_value).text()
+		$("#" + id_activity_value).html('<input type="text" id="' + id_activity_value + '_input" value="' + contents_activity_value + '">')
+
+		//Replace edit button with form input submit 
+		$(this).replaceWith('<input type="" value="Save" class="edit_submit btn btn-warning" />')
+		
+		// Remove the delete button
+		var id_activity_delete = id_row + "_activity_delete"
+		$("#" + id_activity_delete).remove()
+
+		// Wrap the table in a Form <<<<STILL TO DEFINE ACTION
+		$("table").wrap($('<form method="POST" id="post-form" action=""></form'))
+		
+		// var location_actions = "#" + $(this).attr("class").split(" ")[0] + "_actions"
+		// $('</form>').appendTo($(location_actions))
+	});
+
+	// $("input.edit_submit").replaceWith("<h2>Hi</h2>")
+
+	$("td").on("click", "input.edit_submit" ,function(event){
+		event.preventDefault();
+		console.log("submit form");
+		var location_row = $(this).parent().parent().attr("id")
+		var element_id = location_row + "_endpoint-url-div_activity_edit"
+		var endpoint = document.getElementById(element_id).getAttribute('url-endpoint')
+		edit_activity(endpoint);
+
+		var id_activity_value = "#" + location_row + "_activity_value_input" //IDs
+		console.log(id_activity_value)
+		console.log($(id_activity_value).val())
+
+		var id_datetime_logged = "#" +location_row + "_datetime_logged_input" //IDs
+		console.log(id_datetime_logged)
+		console.log($(id_datetime_logged).val())
+
+
+
+
+	});
+
+	function edit_activity(endpoint) {
+		//console.log($('#post-form').val())
+		console.log("eddited activity")
+		console.log(endpoint)
+	}
+
+
+</script>
+
+{% endblock %}

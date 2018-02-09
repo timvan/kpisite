@@ -42,3 +42,14 @@ https://i.redd.it/9xcg84rdk9701.png
 LESSONS LEARNT
 
 JsonResponse for Django requests
+
+
+TODO DEPLOYMENT
+docker
+
+
+PACKAGES USED
+django rest framework
+python
+django
+django-bootstrap4-datetimepicker [3] - not in use

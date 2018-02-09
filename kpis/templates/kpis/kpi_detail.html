@@ -21,58 +21,8 @@
 <br>
 
 
-
-
-<!-- Date Table Section -->
-
-<h3>Data Entries</h3>
-<br>
-<div class="table-responsive">
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>PK</th>
-				<th>Date Published</th>
-				<th>Activity Value</th>
-				<th>Actions</th>
-			</tr>
-		</thead>
-		<tbody>
-		 	{% for activity in activity_list %}
-
-		 		{% if activity.pk == activity_editing.pk %}
-		 			<tr>
-						<td>{{ activity_editing.pk }}</td>
-						<form method="post" class="post-form">{% csrf_token %}
-						{% for field in form %}
-						<td>{{ field }}</td>
-						{% endfor %}
-						<td><button type="submit" class="btn btn-deault">Save</button></td>
-						</form>
-					</tr>
-
-		 		{% else %}
-					<tr>
-						<td>{{ activity.pk }}</td>
-						<td>{{ activity.datetime_logged }}</td>
-						<td>{{ activity.activity_value }}</td>
-						<td>
-							<a href="{% url 'activity_edit' pk=kpi.pk pk_act=activity.pk %}" class="btn btn-default">Edit</a>
-							<a href="{% url 'activity_delete' pk=kpi.pk pk_act=activity.pk %}" class="btn btn-default">Delete</a>
-						</td>
-					</tr>
-
-				{% endif %}
-
-
-			{% endfor %}
-		</tbody>
-		
-	</table>
-	
-</div>
-
-
+{% block datatable %}
+{% endblock %}
 
 
 {% endblock %}

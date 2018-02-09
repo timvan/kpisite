@@ -15,8 +15,11 @@ urlpatterns = [
 	path('kpis/<int:pk>/charts/', views.kpi_charts, name = 'kpi_charts'),
 	path('kpis/<int:pk>/charts/data', views.ChartData.as_view(), name = 'ChartData'),
 	path('kpis/<int:pk>/charts/activity_history', views.ChartHistory.as_view(), name = 'ChartHistory'),
-	path('kpis/<int:pk>/detail/<int:pk_act>/delete', views.activity_delete, name = 'activity_delete'),
-	path('kpis/<int:pk>/detail/<int:pk_act>/edit', views.activity_edit, name = 'activity_edit'),
+	path('kpis/<int:pk>/datatable/<int:pk_act>/delete', views.activity_delete, name = 'activity_delete'),
+	path('kpis/<int:pk>/datatable/<int:pk_act>/edit', views.activity_edit, name = 'activity_edit'),
+	path('kpis/<int:pk>/datatable/', views.kpi_datatable, name = 'kpi_datatable'),
 
 
 ]
+
+# path('kpis/<int:pk>/detail/datatable', views.DataTable.as_view(), name = 'DataTable'),

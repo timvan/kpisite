@@ -6,6 +6,8 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic import View
 from django.db.models import Sum
+from django.core.paginator import Paginator
+from django.views.generic import DetailView
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -38,16 +40,16 @@ def index(request):
 	}
 	return render(request, 'kpis/index.html', context)
 
+
 @login_required
 def kpi_detail(request, pk):
 	kpi = get_object_or_404(KPI, pk = pk)
-	activity_list = Activity.objects.filter(kpi_id = kpi.id).order_by('-datetime_logged')
+	activity_list = Activity.objects.filter(kpi = kpi).order_by('-datetime_logged')
 	context = {
 		'kpi' : kpi,
 		'activity_list' : activity_list
 	}
 	return render(request, 'kpis/kpi_detail.html', context)
-
 
 @login_required
 def kpi_new(request):
@@ -114,7 +116,7 @@ def create_examples(request):
 		kpi = KPI(author = request.user, title = kpi_titles[i], units = kpi_units, periodicity = kpi_periodicities[i], group = kpi_groups[i])
 		kpi.save()
 		for j in range(random.randint(20, 300)):
-			new_activity = Activity(kpi = kpi, activity_value = random.randint(0,activity_amount_max[i]), datetime_logged = today - timedelta(random.randint(0, 365)))
+			new_activity = Activity(kpi = kpi, activity_value = random.randint(1,activity_amount_max[i]), datetime_logged = today - timedelta(random.randint(0, 365)))
 			new_activity.save()
 
 	return redirect('index')
@@ -123,33 +125,55 @@ def create_examples(request):
 
 #-------------- Activity Actions -------------#
 
+
+def get_paginator(request, pk):
+	kpi = get_object_or_404(KPI, pk = pk)
+	activity_list = Activity.objects.filter(kpi = kpi).order_by('-datetime_logged')
+	paginator = Paginator(activity_list, 10)
+	page = request.GET.get('page')
+	activities = paginator.get_page(page)
+	return activities
+
+def kpi_datatable(request, pk):
+	kpi = get_object_or_404(KPI, pk = pk)
+	activity_list = get_paginator(request, pk)
+
+	context = {
+		'kpi' : kpi,
+		'activity_list' : activity_list,
+	}
+
+	print(request)
+
+	return render(request, 'kpis/kpi_datatable.html', context)
+
 def activity_delete(request, pk, pk_act):
-	 activity = get_object_or_404(Activity, pk = pk_act)
-	 activity.delete()
-	 return redirect('kpi_detail', pk = pk)
+	#print(extra)
+	activity = get_object_or_404(Activity, pk = pk_act)
+	activity.delete()
+	print(request)
+	return redirect('kpi_datatable', pk = pk)
+
 
 def activity_edit(request, pk, pk_act):
 	kpi = get_object_or_404(KPI, pk = pk)
 	activity = get_object_or_404(Activity, pk = pk_act)
-	activity_list = Activity.objects.filter(kpi_id = kpi.id).order_by('-datetime_logged')
 
 	if request.method == "POST":
 		form = ActivityForm(request.POST, instance = activity)
 		if form.is_valid():
 			activity = form.save(commit = False)
 			activity.save()
-			return redirect('kpi_detail', pk = kpi.pk)
+			return redirect('kpi_datatable', pk = kpi.pk)
 	else:
 		form = ActivityForm(instance = activity)
-	
+
 	context = {
 		'form' : form,
-		'kpi' : kpi,
 		'activity_editing' : activity,
-		'activity_list' : activity_list,
 	}
 
-	return render(request, 'kpis/kpi_detail.html', context)
+	return render(request, 'kpis/kpi_datatable.html', context)
 
 #-------------- Administration -------------#
 
@@ -266,6 +290,31 @@ class ChartHistory(APIView):
 			"chart_labels" : labels[::-1],
 		}
 		return Response(data)
+
+#-------------- Data Table -------------#
+
+class DataTable(APIView):
+	authentication_classes = []
+	permission_classes = []
+	def get(self, request, pk, format=None):
+
+		kpi = get_object_or_404(KPI, pk = pk)
+		activity_list = Activity.objects.filter(kpi_id = kpi.id)
+		
+		data = {"data" : []}
+
+		for i in range(len(activity_list)):
+
+			activity_pk = (activity_list[i].pk)
+			datetime_logged = (activity_list[i].datetime_logged.strftime("%c"))
+			activity_value = (activity_list[i].activity_value)
+			data["data"].append({"activity_pk" : activity_pk, "datetime_logged" : datetime_logged, "activity_value" : activity_value, })
+
+		print(data)
+
+		return Response(data)
+
+
 
 
 

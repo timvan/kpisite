@@ -1,0 +1,18 @@
+{% if activity.pk == activity_editing.pk %}
+	<tr>
+	<td>{{ activity_editing.pk }}</td>
+	<form method="post" class="post-form">{% csrf_token %}
+	{% for field in form %}
+	<td>{{ field }}</td>
+	{% endfor %}
+	<td><button type="submit" class="btn btn-deault">Save</button></td>
+	</form>
+</tr>
+{% else %}
+
+
+
+// action="{% url "activity_edit" pk=kpi.pk pk_act=activity.pk%}"
+
+
+<div id='endpoint-url-div-activity_edit' url-endpoint="{% url 'activity_edit' pk=kpi.pk act_pk=activity.pk %}"  style="display: none;"></div>

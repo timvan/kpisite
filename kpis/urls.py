@@ -13,11 +13,12 @@ urlpatterns = [
 	path('kpis/<int:pk>/delete/', views.kpi_delete, name = 'kpi_delete'),
 	path('kpis/<int:pk>/edit/', views.kpi_edit, name = 'kpi_edit'),
 	path('kpis/<int:pk>/charts/', views.kpi_charts, name = 'kpi_charts'),
-	path('kpis/<int:pk>/charts/data', views.ChartData.as_view(), name = 'ChartData'),
+	path('kpis/<int:pk>/charts/data', views.ChartWeekDays.as_view(), name = 'ChartWeekDays'),
 	path('kpis/<int:pk>/charts/activity_history', views.ChartHistory.as_view(), name = 'ChartHistory'),
+	path('kpis/<int:pk>/datatable/', views.kpi_datatable, name = 'kpi_datatable'),
 	path('kpis/<int:pk>/datatable/<int:pk_act>/delete', views.activity_delete, name = 'activity_delete'),
 	path('kpis/<int:pk>/datatable/<int:pk_act>/edit', views.activity_edit, name = 'activity_edit'),
-	path('kpis/<int:pk>/datatable/', views.kpi_datatable, name = 'kpi_datatable'),
+	
 
 
 ]

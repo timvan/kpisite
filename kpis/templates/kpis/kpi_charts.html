@@ -1,6 +1,6 @@
-{% extends 'kpis/base.html' %}
+{% extends 'kpis/kpi_detail.html' %}
 
-{% block content %}
+{% block charts %}
 
 
 
@@ -10,18 +10,20 @@
 
 
 <div id="kpi-title" kpi-title="{{ kpi.title }}" style="display: none;"></div>
-<div id='endpoint-url-div-doughnut' url-endpoint="{% url 'ChartData' kpi.pk %}"  style="display: none;"></div>
+<div id='endpoint-url-div-doughnut' url-endpoint="{% url 'ChartWeekDays' kpi.pk %}"  style="display: none;"></div>
 <div id='endpoint-url-div-barchart' url-endpoint="{% url 'ChartHistory' kpi.pk %}"  style="display: none;"></div>
 
 <div class="container">
 	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-5">
 			<canvas id="myChart" width="400" height="400"></canvas>
 		</div>
-		<div class="col-md-6">
+		<br>
+		<div class="col-md-7">
 			<canvas id="chart2" width="400" height="400"></canvas>
 		</div>
 	</div>
+	<br>
 </div>
 
 <script type="text/javascript">

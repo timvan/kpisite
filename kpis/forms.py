@@ -6,7 +6,7 @@ class KpiForm(forms.ModelForm):
 
 	class Meta:
 		model = KPI
-		fields = ('title', 'group', 'periodicity')
+		fields = ('title', 'group', 'periodicity', 'date_created')
 
 
 class ActivityForm(forms.ModelForm):
@@ -16,14 +16,12 @@ class ActivityForm(forms.ModelForm):
 		fields = ('datetime_logged', 'activity_value')
 
 		widgets = {
-			'datetime_logged' : forms.TextInput(attrs={
-				'id': 'post-datetime_logged',
+			'datetime_logged' : forms.DateTimeInput(attrs={
+				'id': 'id_datetime_logged',
 				'required' : True,
-				'placeholder' : "date 2"
 				}),
-			'activity_value' : forms.TextInput(attrs={
-				'id': 'post-activity_value',
-				'required' : True,
-				'placeholder' : "activity 2"
+			'activity_value' : forms.NumberInput(attrs={
+				'id': 'id_activity_value',
+				'required' : True
 				}),
 		}

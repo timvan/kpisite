@@ -18,6 +18,7 @@ from .forms import KpiForm, ActivityForm
 from datetime import date, datetime, timedelta
 import csv
 import random
+import json
 
 
 
@@ -74,9 +75,12 @@ def kpi_delete(request, pk):
 @login_required
 def kpi_edit(request, pk):
 	kpi = get_object_or_404(KPI, pk = pk)
+	print("POST: ", request.POST)
 	if request.method == "POST":
 		form = KpiForm(request.POST, instance = kpi)
 		if form.is_valid():
+			print("form is valid")
+			print(form)
 			kpi = form.save(commit = False)
 			kpi.author = request.user
 			kpi.save()
@@ -125,25 +129,18 @@ def create_examples(request):
 
 #-------------- Activity Actions -------------#
 
-
-def get_paginator(request, pk):
+def kpi_datatable(request, pk):
 	kpi = get_object_or_404(KPI, pk = pk)
 	activity_list = Activity.objects.filter(kpi = kpi).order_by('-datetime_logged')
 	paginator = Paginator(activity_list, 10)
 	page = request.GET.get('page')
 	activities = paginator.get_page(page)
-	return activities
-
-def kpi_datatable(request, pk):
-	kpi = get_object_or_404(KPI, pk = pk)
-	activity_list = get_paginator(request, pk)
 
 	context = {
 		'kpi' : kpi,
-		'activity_list' : activity_list,
+		'activity_list' : activities,
 	}
 
-	print(request)
 
 	return render(request, 'kpis/kpi_datatable.html', context)
 
@@ -155,25 +152,63 @@ def activity_delete(request, pk, pk_act):
 	return redirect('kpi_datatable', pk = pk)
 
 
+# def activity_edit(request, pk, pk_act):
+# 	kpi = get_object_or_404(KPI, pk = pk)
+# 	activity = get_object_or_404(Activity, pk = pk_act)
+
+# 	if request.method == "POST":
+# 		form = ActivityForm(request.POST, instance = activity)
+# 		if form.is_valid():
+# 			activity = form.save(commit = False)
+# 			activity.save()
+# 			return redirect('kpi_datatable', pk = kpi.pk)
+# 	else:
+# 		form = ActivityForm(instance = activity)
+
+# 	context = {
+# 		'form' : form,
+# 		'activity_editing' : activity,
+# 	}
+
+# 	return render(request, 'kpis/kpi_datatable.html', context)
+
 def activity_edit(request, pk, pk_act):
+	# print('views.activity_edit', pk, pk_act)
 	kpi = get_object_or_404(KPI, pk = pk)
 	activity = get_object_or_404(Activity, pk = pk_act)
 
+	response_data = {}
+
 	if request.method == "POST":
 		form = ActivityForm(request.POST, instance = activity)
+
+		# NEED TO ADD - detection of dates great than current date
+
 		if form.is_valid():
+
 			activity = form.save(commit = False)
 			activity.save()
-			return redirect('kpi_datatable', pk = kpi.pk)
+
+			response_data['result'] = 'Succes'
+			response_data['activity'] = activity.pk
+			response_data['kpi'] = activity.kpi.pk.__str__()
+			response_data['datetime_logged'] = activity.datetime_logged.__str__()
+			response_data['activity_value'] = activity.activity_value
+
+			return HttpResponse(
+				json.dumps(response_data),
+				content_type = "application/json"
+				)
+
+		else:
+			response_data['result'] = 'Form not valid'
+
 	else:
-		form = ActivityForm(instance = activity)
+		return HttpResponse(
+			json.dumps({"error" : "nothing happening"}),
+			content_type = "application/json"
+			)
 
-	context = {
-		'form' : form,
-		'activity_editing' : activity,
-	}
-
-	return render(request, 'kpis/kpi_datatable.html', context)
 
 #-------------- Administration -------------#
 
@@ -224,7 +259,7 @@ def kpi_charts(request, pk):
 	return render(request, 'kpis/kpi_charts.html', context)
 
 
-class ChartData(APIView):
+class ChartWeekDays(APIView):
 	authentication_classes = []
 	permission_classes = []
 	def get(self, request, pk, format=None):

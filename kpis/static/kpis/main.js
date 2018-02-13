@@ -55,26 +55,71 @@ $(function() {
 });
 
 
-//AJAX for posting
-function create_post(endpoint, value1, value2) {
-    console.log("activity edit is working!") // sanity check
-    $.ajax({
-        url : endpoint, // the endpoint
-        type : "POST", // http method
-        data : { the_post : $('#post-text').val() }, // data sent with the post request
+// function edit_activity(endpoint) {
+//     console.log("edit_activity!")
+//     console.log(endpoint)
+// }
 
-        // handle a successful response
-        success : function(json) {
-            $('#post-text').val(''); // remove the value from the input
-            console.log(json); // log the returned json to the console
-            console.log("success"); // another sanity check
+
+function activity_edit(endpoint, elements){
+    // console.log("activity_edit is working") // sanity check
+    $.ajax({
+        url : endpoint, //url endpoint
+        type : "POST", // http method
+        data : { 
+            datetime_logged : $(elements[0]).val(),
+            activity_value : $(elements[1]).val()
+            }, // data sent with the request
+
+        // handle a succesful response
+        success : function(json){
+            // $(elements[0]).val('put json data into here'); // put this into the elemenet
+            //console.log(json); // log the returned json to the console to check
+            //console.log('ajax success'); // sanity check
+            lock_in_activity_form_elements(elements)
         },
 
-        // handle a non-successful response
+        // handle a unsuccessful response
         error : function(xhr,errmsg,err) {
-            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            $('#results').html("<div class='alert-box alert radius' data-alert>Error: "
+             + errmsg + " <a href='#' class='close'>&times;</a></div>") // add error to the DOM
+            console.log(xhr.status + ": " + xhr,responseText); // provide a bit more info about the error to the console
         }
-    });
-};
+
+
+    })
+}
+
+function lock_in_activity_form_elements(elements){
+
+    var id_row = elements[0].split("_")[0]
+    var element_parent  = ""
+    var element_content = ""
+    
+    var edit_button = '<button class="' + id_row.substring(1) + ' activity_edit btn btn-success">Edit</button>'
+    var submit_button = $(elements[0]).parent().parent().find(".edit_submit")
+    
+    $(submit_button).replaceWith(edit_button)
+
+    element_parent = $(elements[0]).parent()
+    element_content = $(elements[0]).val()
+    $(elements[0]).remove()
+    $(element_parent).append(element_content)
+
+
+    element_parent = $(elements[1]).parent()
+    element_content = $(elements[1]).val()
+    $(elements[1]).remove()
+    $(element_parent).append(element_content)
+
+
+ 
+
+
+
+    // <td id="row{{ forloop.counter }}_datetime_logged" class="row{{ forloop.counter }}_form">{{ activity.datetime_logged|date:"Y-m-d" }} {{ activity.datetime_logged|time:"H:i:s" }}</td>
+    // <td id="row{{ forloop.counter }}_activity_value" class="row{{ forloop.counter }}">{{ activity.activity_value }}</td>
+}
+
+
+

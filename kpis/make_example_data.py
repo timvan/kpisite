@@ -1,6 +1,6 @@
 
 
-kpi_titles = ["Coffees", "Swum in the Sea", "Went surfing", "Hours worked on project", "Km's ran", "Films watched"]
+kpi_titles = ["Coffees", "Swims in the Sea", "Surfing sessions", "Hours worked on project", "Km's ran", "Films watched"]
 kpi_periodicities = ['WK', 'MH', 'MH', "DY", "WK", "YR"]
 author = request.user
 kpi_groups = ["RD", "BL", "BL", "GR", "BL", "RD"]

@@ -46,10 +46,15 @@ def index(request):
 def kpi_detail(request, pk):
 	kpi = get_object_or_404(KPI, pk = pk)
 	activity_list = Activity.objects.filter(kpi = kpi).order_by('-datetime_logged')
+	paginator = Paginator(activity_list, 10)
+	page = request.GET.get('page')
+	activities = paginator.get_page(page)
+
 	context = {
 		'kpi' : kpi,
-		'activity_list' : activity_list
+		'activity_list' : activities,
 	}
+
 	return render(request, 'kpis/kpi_detail.html', context)
 
 @login_required
@@ -135,42 +140,19 @@ def kpi_datatable(request, pk):
 	paginator = Paginator(activity_list, 10)
 	page = request.GET.get('page')
 	activities = paginator.get_page(page)
-
 	context = {
 		'kpi' : kpi,
 		'activity_list' : activities,
 	}
-
-
 	return render(request, 'kpis/kpi_datatable.html', context)
 
+
 def activity_delete(request, pk, pk_act):
-	#print(extra)
 	activity = get_object_or_404(Activity, pk = pk_act)
 	activity.delete()
 	print(request)
 	return redirect('kpi_datatable', pk = pk)
 
-
-# def activity_edit(request, pk, pk_act):
-# 	kpi = get_object_or_404(KPI, pk = pk)
-# 	activity = get_object_or_404(Activity, pk = pk_act)
-
-# 	if request.method == "POST":
-# 		form = ActivityForm(request.POST, instance = activity)
-# 		if form.is_valid():
-# 			activity = form.save(commit = False)
-# 			activity.save()
-# 			return redirect('kpi_datatable', pk = kpi.pk)
-# 	else:
-# 		form = ActivityForm(instance = activity)
-
-# 	context = {
-# 		'form' : form,
-# 		'activity_editing' : activity,
-# 	}
-
-# 	return render(request, 'kpis/kpi_datatable.html', context)
 
 def activity_edit(request, pk, pk_act):
 	# print('views.activity_edit', pk, pk_act)
@@ -324,29 +306,6 @@ class ChartHistory(APIView):
 			"chart_data" : chart_data[::-1],
 			"chart_labels" : labels[::-1],
 		}
-		return Response(data)
-
-#-------------- Data Table -------------#
-
-class DataTable(APIView):
-	authentication_classes = []
-	permission_classes = []
-	def get(self, request, pk, format=None):
-
-		kpi = get_object_or_404(KPI, pk = pk)
-		activity_list = Activity.objects.filter(kpi_id = kpi.id)
-		
-		data = {"data" : []}
-
-		for i in range(len(activity_list)):
-
-			activity_pk = (activity_list[i].pk)
-			datetime_logged = (activity_list[i].datetime_logged.strftime("%c"))
-			activity_value = (activity_list[i].activity_value)
-			data["data"].append({"activity_pk" : activity_pk, "datetime_logged" : datetime_logged, "activity_value" : activity_value, })
-
-		print(data)
-
 		return Response(data)
 
 

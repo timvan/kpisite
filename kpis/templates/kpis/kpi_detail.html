@@ -15,16 +15,15 @@
 <a href="{% url 'kpi_delete' pk=kpi.pk %}">Delete</a>
 <span> | </span>
 <a href="{% url 'kpi_edit' pk=kpi.pk %}">Edit KPI</a>
-<span> | </span>
-<a href="{% url 'kpi_charts' pk=kpi.pk %}">View Charts</a>
-<span> | </span>
-<a href="{% url 'kpi_datatable' pk=kpi.pk %}">View Data</a>
 <br>
 <br>
 
+{% include "kpis/kpi_charts.html" %}
 
 {% block charts %}
 {% endblock %}
+
+{% include "kpis/kpi_datatable.html" %}
 
 {% block datatable %}
 {% endblock %}
